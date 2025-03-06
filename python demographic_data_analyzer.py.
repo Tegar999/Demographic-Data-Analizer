@@ -1,0 +1,60 @@
+# Import library
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Baca dataset (misal: 'adult.csv')
+df = pd.read_csv('adult.csv')
+
+# Lihat 5 data teratas
+print(df.head())
+
+# Informasi umum tentang dataset
+print(df.info())
+
+# Statistik deskriptif
+print(df.describe())
+
+# 1. Rata-rata usia
+average_age = df['age'].mean()
+print(f"\nRata-rata usia: {average_age:.2f} tahun")
+
+# 2. Persentase pendapatan tinggi (>50K)
+high_income = df[df['income'] == '>50K']
+percentage_high_income = len(high_income) / len(df) * 100
+print(f"Persentase pendapatan tinggi: {percentage_high_income:.2f}%")
+
+# 3. Rata-rata usia pekerja dengan pendapatan tinggi
+average_age_high_income = high_income['age'].mean()
+print(f"Rata-rata usia pendapatan tinggi: {average_age_high_income:.2f} tahun")
+
+# 4. Persentase pekerja dengan gelar sarjana yang berpenghasilan tinggi
+bachelor_degree = df[df['education'] == 'Bachelors']
+high_income_bachelor = bachelor_degree[bachelor_degree['income'] == '>50K']
+percentage_bachelor_high_income = len(high_income_bachelor) / len(bachelor_degree) * 100
+print(f"Persentase sarjana berpenghasilan tinggi: {percentage_bachelor_high_income:.2f}%")
+
+# 5. Negara dengan persentase tertinggi orang berpendapatan tinggi
+country_income = df.groupby('native-country')['income'].value_counts(normalize=True).unstack()
+top_country = country_income['>50K'].idxmax()
+top_country_percentage = country_income['>50K'].max() * 100
+print(f"Negara dengan persentase pendapatan tinggi tertinggi: {top_country} ({top_country_percentage:.2f}%)")
+
+# 6. Visualisasi distribusi pendidikan
+plt.figure(figsize=(10, 6))
+df['education'].value_counts().plot(kind='bar', color='skyblue')
+plt.title('Distribusi Tingkat Pendidikan')
+plt.xlabel('Tingkat Pendidikan')
+plt.ylabel('Jumlah')
+plt.xticks(rotation=45)
+plt.show()
+
+# 7. Visualisasi hubungan usia dan pendapatan
+plt.figure(figsize=(10, 6))
+plt.scatter(df[df['income'] == '>50K']['age'], df[df['income'] == '>50K']['hours-per-week'], color='green', label='>50K')
+plt.scatter(df[df['income'] == '<=50K']['age'], df[df['income'] == '<=50K']['hours-per-week'], color='red', label='<=50K')
+plt.title('Hubungan Usia dan Jam Kerja per Minggu Berdasarkan Pendapatan')
+plt.xlabel('Usia')
+plt.ylabel('Jam Kerja per Minggu')
+plt.legend()
+plt.show()
